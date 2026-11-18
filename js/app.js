@@ -20,7 +20,8 @@
   }
 
   let cfg = LH.fromSaved(load(KEY_CFG));
-  const docState = Object.assign({ html: '', css: '', name: '' }, load(KEY_DOC) || {});
+  const docState = Object.assign({ id: null, html: '', css: '', name: '' }, load(KEY_DOC) || {});
+  const isTouch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
 
   // ---------- Yardımcılar ----------
   let toastTimer;
@@ -43,10 +44,24 @@
   const nextFrame = () => new Promise(r => setTimeout(r, 60));
 
   // ---------- Sekmeler ----------
-  $$('.tab-btn').forEach(b => b.addEventListener('click', () => {
-    $$('.tab-btn').forEach(x => x.classList.toggle('active', x === b));
-    $$('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + b.dataset.tab));
-    if (b.dataset.tab === 'document') renderPreview(); else renderLhPreview();
+  function showTab(name) {
+    $$('.tab-btn').forEach(x => x.classList.toggle('active', x.dataset.tab === name));
+    $$('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
+    if (name === 'document') renderPreview(); else renderLhPreview();
+    window.scrollTo(0, 0);
+  }
+  $$('.tab-btn').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+
+  // Düzenle / Önizleme anahtarı (tablet ve telefon)
+  $$('.view-switch').forEach(sw => sw.addEventListener('click', e => {
+    const b = e.target.closest('button[data-view]');
+    if (!b) return;
+    $$('button', sw).forEach(x => x.classList.toggle('active', x === b));
+    const layout = document.getElementById(sw.dataset.for);
+    layout.dataset.view = b.dataset.view;
+    if (b.dataset.view === 'preview') {
+      if (layout.id === 'doc-layout') renderPreview(); else renderLhPreview();
+    }
   }));
 
   // ---------- Editör ----------
@@ -74,12 +89,15 @@
     return h.replace(/<[^>]+>/g, '').trim() || /<(img|table|hr)/i.test(h) ? h : '';
   }
 
+  const nameInput = $('#doc-name');
+
   const saveDoc = debounce(() => {
     docState.html = editorHTML();
     save(KEY_DOC, docState);
-  }, 500);
+  }, 600);
 
   editor.addEventListener('input', () => { saveDoc(); schedulePreview(); });
+  nameInput.addEventListener('input', () => { docState.name = nameInput.value.trim(); saveDoc(); });
 
   $('#toolbar').addEventListener('mousedown', e => {
     if (e.target.closest('button')) e.preventDefault(); // seçimi koru
@@ -150,8 +168,12 @@
     }
     applyDocxCss(docState.css);
     docState.name = files[0].name.replace(/\.[^.]+$/, '');
+    nameInput.value = docState.name;
     docState.html = editorHTML();
     save(KEY_DOC, docState);
+    // Telefon/tablette yüklemeden sonra antetli önizlemeyi göster
+    const sw = $('.view-switch[data-for="doc-layout"]');
+    if (getComputedStyle(sw).display !== 'none') $('button[data-view="preview"]', sw).click();
     await renderPreview();
     toast(files.length > 1 ? `${results.length} dosya antete yerleştirildi.` : 'Belge antete yerleştirildi.');
   }
@@ -160,6 +182,7 @@
     if (editorHTML() && !confirm('Editördeki içerik silinecek. Emin misiniz?')) return;
     editor.innerHTML = '';
     docState.html = ''; docState.css = ''; docState.name = '';
+    nameInput.value = '';
     applyDocxCss('');
     save(KEY_DOC, docState);
     renderPreview();
@@ -191,7 +214,7 @@
   }
 
   function fitScale(container) {
-    const w = container.clientWidth - 24;
+    const w = (container.clientWidth || container.parentElement.clientWidth || window.innerWidth) - (window.innerWidth < 760 ? 4 : 24);
     return Math.max(0.3, Math.min(1, w / LH.PAGE_W));
   }
 
@@ -211,7 +234,7 @@
       const s = fitScale(preview);
       const total = pages.length;
       preview.replaceChildren(...pages.map((p, i) => frame(p, s, `${i + 1} / ${total}`)));
-      $('#page-count').textContent = total + ' sayfa';
+      $$('.page-count').forEach(el => { el.textContent = total + ' sayfa'; });
     } finally {
       st.remove();
     }
@@ -242,7 +265,7 @@
       for (let i = 0; i < pages.length; i++) {
         busy(`PDF oluşturuluyor… (${i + 1}/${pages.length})`);
         const canvas = await window.html2canvas(pages[i], {
-          scale: 3, backgroundColor: '#ffffff', useCORS: true, logging: false,
+          scale: isTouch ? 2.5 : 3, backgroundColor: '#ffffff', useCORS: true, logging: false,
           width: LH.PAGE_W, height: LH.PAGE_H, windowWidth: LH.PAGE_W, scrollX: 0, scrollY: 0
         });
         if (i > 0) pdf.addPage();
@@ -574,6 +597,7 @@
   // ---------- Başlangıç ----------
   applyDocxCss(docState.css);
   editor.innerHTML = docState.html || '';
+  nameInput.value = docState.name || '';
   applyEditorVars();
   buildForm();
   (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => renderPreview());

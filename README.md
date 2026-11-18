@@ -10,7 +10,8 @@ Word, PDF, metin veya görsel dosyalarını **Defne Çocuk ve Aile antetli kâğ
 - **Çıktı:** `PDF İndir` ile doğrudan PDF, `Yazdır` ile yazıcıya ya da “PDF olarak kaydet”e gönderin.
 - **Antet düzenleme:** Üst bant, logo, başlık yazısı, ayraç çizgisi, filigran, alt bilgi (telefon/adres/web), yazı tipi, renkler ve kenar boşlukları değiştirilebilir. Yeni logo/filigran yüklenebilir.
 - **Hazır antet modu:** İsterseniz başka bir antetli kâğıdı (PDF veya A4 görsel) doğrudan arka plan olarak kullanabilirsiniz.
-- **Kayıt:** Antet ayarları ve son belge tarayıcıda otomatik saklanır. Ayarlar `.json` olarak dışa/içe aktarılabilir (başka bilgisayara taşımak için).
+- **Telefon ve tablet:** Arayüz mobil uyumludur. Telefonda Word/PDF yükleyince antetli önizleme açılır; alt çubuktaki *PDF İndir* ile kaydedilir. Tablet ve telefonda *Düzenle / Önizleme* anahtarıyla geçiş yapılır.
+- **Kayıt:** Antet ayarları ve üzerinde çalışılan son belge tarayıcıda otomatik saklanır. Ayarlar `.json` olarak dışa/içe aktarılabilir (başka bilgisayara taşımak için).
 
 ## Kullanım
 

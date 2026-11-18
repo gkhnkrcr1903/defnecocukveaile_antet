@@ -2,9 +2,13 @@
 <html lang="tr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#85C7BB">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Defne Belge">
   <title>Defne Çocuk ve Aile Belge Uygulaması</title>
   <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="apple-touch-icon" href="assets/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700&family=Nunito+Sans:wght@400;600;700&family=Open+Sans:wght@400;600;700&family=Outfit:wght@400;600;700&family=Poppins:wght@400;600;700&family=Raleway:wght@400;600;700&family=Roboto:wght@400;500;700&family=Merriweather:wght@400;700&display=swap">
@@ -20,21 +24,37 @@
       </div>
     </div>
     <nav class="tabs" role="tablist">
-      <button class="tab-btn active" data-tab="document" role="tab">📄 Belge Hazırla</button>
-      <button class="tab-btn" data-tab="letterhead" role="tab">🎨 Antet Düzenle</button>
+      <button class="tab-btn active" data-tab="document" role="tab"><span class="ti">📄</span><span>Belge Hazırla</span></button>
+      <button class="tab-btn" data-tab="letterhead" role="tab"><span class="ti">🎨</span><span>Antet Düzenle</span></button>
     </nav>
   </header>
 
   <main>
     <!-- BELGE HAZIRLA -->
     <section id="tab-document" class="tab-panel active">
-      <div class="doc-layout">
+      <div class="doc-bar">
+        <div class="doc-name-wrap">
+          <input id="doc-name" class="doc-name" type="text" placeholder="Belge adı" aria-label="Belge adı">
+        </div>
+        <div class="doc-actions">
+          <button id="btn-new" class="btn ghost" title="Yeni boş belge"><span class="bi">＋</span><span>Yeni</span></button>
+          <button id="btn-print" class="btn" title="Yazdır"><span class="bi">🖨</span><span>Yazdır</span></button>
+          <button id="btn-pdf" class="btn primary" title="Antetli PDF indir"><span class="bi">⬇</span><span>PDF İndir</span></button>
+        </div>
+      </div>
+
+      <div class="view-switch" data-for="doc-layout" role="tablist">
+        <button data-view="edit" class="active">✏️ Düzenle</button>
+        <button data-view="preview">👁 Önizleme <span class="badge page-count">1 sayfa</span></button>
+      </div>
+
+      <div class="doc-layout" id="doc-layout" data-view="edit">
         <div class="doc-left">
           <label id="dropzone" class="dropzone">
             <input type="file" id="file-input" multiple accept=".docx,.docm,.dotx,.doc,.pdf,.txt,.md,.csv,.html,.htm,.png,.jpg,.jpeg,.gif,.webp">
             <div class="dz-icon">⬆</div>
-            <div class="dz-title">Word, PDF, metin veya görsel dosyası yükleyin</div>
-            <div class="dz-sub">Sürükleyip bırakın ya da tıklayıp seçin · .docx, .pdf, .txt, .html, .png, .jpg</div>
+            <div class="dz-title">Word, PDF, metin veya görsel yükleyin</div>
+            <div class="dz-sub"><span class="only-pointer">Sürükleyip bırakın ya da tıklayıp seçin · </span>.docx, .pdf, .txt, .png, .jpg</div>
           </label>
 
           <div class="card editor-card">
@@ -56,12 +76,12 @@
               <button data-cmd="justifyRight" title="Sağa hizala">≡⯈</button>
               <button data-cmd="justifyFull" title="İki yana yasla">☰</button>
               <span class="sep"></span>
-              <button data-cmd="insertUnorderedList" title="Madde işaretli liste">• Liste</button>
-              <button data-cmd="insertOrderedList" title="Numaralı liste">1. Liste</button>
+              <button data-cmd="insertUnorderedList" title="Madde işaretli liste">•&nbsp;Liste</button>
+              <button data-cmd="insertOrderedList" title="Numaralı liste">1.&nbsp;Liste</button>
               <span class="sep"></span>
-              <button data-action="date" title="Bugünün tarihini ekle">📅 Tarih</button>
-              <button data-action="pagebreak" title="Sayfa sonu ekle">⤓ Sayfa sonu</button>
-              <button data-cmd="removeFormat" title="Biçimi temizle">⌫ Biçim</button>
+              <button data-action="date" title="Bugünün tarihini ekle">📅&nbsp;Tarih</button>
+              <button data-action="pagebreak" title="Sayfa sonu ekle">⤓&nbsp;Sayfa&nbsp;sonu</button>
+              <button data-cmd="removeFormat" title="Biçimi temizle">⌫&nbsp;Biçim</button>
               <span class="sep"></span>
               <button data-cmd="undo" title="Geri al (Ctrl+Z)">↶</button>
               <button data-cmd="redo" title="Yinele (Ctrl+Y)">↷</button>
@@ -77,12 +97,7 @@
           <div class="preview-bar">
             <div class="preview-info">
               <strong>Önizleme</strong>
-              <span id="page-count" class="badge">1 sayfa</span>
-            </div>
-            <div class="preview-actions">
-              <button id="btn-new" class="btn ghost" title="İçeriği temizle">Yeni belge</button>
-              <button id="btn-print" class="btn">🖨 Yazdır</button>
-              <button id="btn-pdf" class="btn primary">⬇ PDF İndir</button>
+              <span class="badge page-count">1 sayfa</span>
             </div>
           </div>
           <div id="preview" class="preview-pages"></div>
@@ -90,14 +105,19 @@
       </div>
     </section>
 
+
     <!-- ANTET DÜZENLE -->
     <section id="tab-letterhead" class="tab-panel">
-      <div class="lh-layout">
+      <div class="view-switch" data-for="lh-layout" role="tablist">
+        <button data-view="edit" class="active">⚙️ Ayarlar</button>
+        <button data-view="preview">👁 Önizleme</button>
+      </div>
+      <div class="lh-layout" id="lh-layout" data-view="edit">
         <aside class="lh-side">
           <div class="lh-actions">
             <button id="lh-reset" class="btn ghost">Varsayılana dön</button>
             <button id="lh-export" class="btn ghost">Ayarları kaydet (.json)</button>
-            <label class="btn ghost">Ayarları yükle<input type="file" id="lh-import" accept=".json" hidden></label>
+            <label class="btn ghost">Ayarları yükle<input type="file" id="lh-import" accept=".json,application/json" hidden></label>
             <button id="lh-blank" class="btn">Boş antetli kâğıt (PDF)</button>
           </div>
           <form id="lh-form" class="lh-form" autocomplete="off"></form>
@@ -105,8 +125,8 @@
         <div class="lh-preview-col">
           <div class="preview-bar">
             <div class="preview-info"><strong>Antet önizlemesi</strong>
-              <label class="inline-check"><input type="checkbox" id="lh-guides" checked> Metin alanını göster</label>
-              <label class="inline-check"><input type="checkbox" id="lh-second"> 2. sayfayı göster</label>
+              <label class="inline-check"><input type="checkbox" id="lh-guides" checked> Metin alanı</label>
+              <label class="inline-check"><input type="checkbox" id="lh-second"> 2. sayfa</label>
             </div>
             <span class="muted">Değişiklikler otomatik kaydedilir</span>
           </div>
